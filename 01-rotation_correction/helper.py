@@ -1,6 +1,27 @@
 '''Helper methods for parsing images to feed into ML models'''
+import csv
 import cv2
 import numpy as np
+
+def load_samples(sample_path):
+    '''Load samples, using the sample_path to find the image dir and .csv file next to it'''
+    csv_reader = csv.reader(open(sample_path + '.csv'))
+
+    images = []
+    labels = []
+
+    for row in csv_reader:
+        image = cv2.imread(f'{sample_path}/{row[0]}', cv2.IMREAD_GRAYSCALE)
+        image = convert_to_square(image, 1000)
+        image = cv2.bitwise_not(image)
+        image = image / 255
+        images.append(image)
+
+        is_paper = 1 if row[1] == 'paper' else 0
+        rotation = int(int(row[2]) / 90)
+        labels.append([is_paper, rotation])
+
+    return np.array(images), np.array(labels)
 
 def convert_to_square(image, size):
     '''Resize an image array, and convert it to a square, by padding it with zeros'''
