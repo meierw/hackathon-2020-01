@@ -1,6 +1,11 @@
 '''Training the page orientation model'''
 
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
+import tensorflow as tf
+from tensorflow import keras
+
 import cv2
 import numpy as np
 import helper
@@ -17,8 +22,33 @@ import helper
 #   - Concatenate all four rotations of image into one square image
 
 DATA_DIR = os.path.dirname(__file__) + '/data'
-TEST_IMAGES, TEST_LABELS = helper.load_samples(DATA_DIR + '/test')
+IMAGE_SIZE = 300
 
-print(TEST_LABELS[3])
-cv2.imshow('hello', TEST_IMAGES[3])
-cv2.waitKey()
+print('Loading data')
+TRAIN_IMAGES, TRAIN_LABELS = helper.load_samples(DATA_DIR + '/train', IMAGE_SIZE)
+TEST_IMAGES, TEST_LABELS = helper.load_samples(DATA_DIR + '/test', IMAGE_SIZE)
+print('Data loaded')
+
+LAYER_SIZE = 20
+MODEL = keras.Sequential([
+    keras.layers.Flatten(input_shape=(IMAGE_SIZE, IMAGE_SIZE)),
+    keras.layers.Dense(LAYER_SIZE, activation='relu'),
+    # keras.layers.Dropout(0.1),
+    keras.layers.Dense(LAYER_SIZE, activation='relu'),
+    # keras.layers.Dropout(0.1),
+    keras.layers.Dense(LAYER_SIZE, activation='relu'),
+    keras.layers.Dense(1, activation='sigmoid')
+])
+MODEL.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+MODEL.fit(TRAIN_IMAGES, TRAIN_LABELS[:, 0], epochs=13)
+
+MODEL.evaluate(TEST_IMAGES, TEST_LABELS[:, 0], verbose=2)
+
+PREDICTIONS = MODEL.predict(TEST_IMAGES)
+
+print('Done')
