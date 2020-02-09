@@ -1,25 +1,18 @@
-'''Training the page orientation model'''
+'''Training the paper or open book identification model'''
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
-import tensorflow as tf
 from tensorflow import keras
 
-import cv2
-import numpy as np
 import helper
 
 # TODO:
 #   - Convert image to a square (done)
 #       - Add whitespace (zeros) instead of squishing, to give the model hints about which is the long side
 #   - Resize image to some fixed square value (done)
-#   - Train to identify pieces of paper from open books
+#   - Train to identify pieces of paper from open books (done)
 #       - Don't do anything with open books, yet. Those will need additional processing
-#   - Train to identify rotation of found pieces of paper
-
-# TODO (maybe):
-#   - Concatenate all four rotations of image into one square image
 
 DATA_DIR = os.path.dirname(__file__) + '/data'
 IMAGE_SIZE = 300

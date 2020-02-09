@@ -3,7 +3,7 @@ import csv
 import cv2
 import numpy as np
 
-def load_samples(sample_path, image_size):
+def load_samples(sample_path, image_size, paper_type=None):
     '''Load samples, using the sample_path to find the image dir and .csv file next to it'''
     csv_reader = csv.reader(open(sample_path + '.csv'))
 
@@ -11,6 +11,8 @@ def load_samples(sample_path, image_size):
     labels = []
 
     for row in csv_reader:
+        if paper_type and paper_type != row[1]:
+            continue
         image = cv2.imread(f'{sample_path}/{row[0]}', cv2.IMREAD_GRAYSCALE)
         image = convert_to_square(image, image_size)
         image = cv2.bitwise_not(image)
